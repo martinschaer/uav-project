@@ -46,35 +46,65 @@ module naca_wing(span, chord, t, n, symetrical=true, center=false, scale=1) {
 
 module wing() {
     rotate([90, 0, 0]) {
-        naca_wing(span=35, chord=20, t=0.12, n=500, center=false, symetrical=false);
-        translate([0, 0, 35])
-            naca_wing(
-                span=15,
-                chord=20,
-                t=0.12,
-                n=500,
-                symetrical=false,
-                scale=[0.75, 0.75]
-            );
+        naca_wing(
+            span=50,
+            chord=20,
+            t=0.14,
+            n=500,
+            symetrical=false,
+            scale=[0.75, 0.75]
+        );
     }
 }
 
 module fuselage() {
-    translate([0, 0, 0])
+    translate([0, 0, -2.5])
         cube([30, 5, 5], center=true);
     translate([30, 0, 0])
         rotate([0, 90, 0])
-            cylinder(h=30, r=2.54/4, center=true);
+            color("black")
+                cylinder(h=30, r=2.54/4, center=true);
 }
 
 module horizontal_stabilizer() {
     translate([45, 0, 0])
         rotate([90, 0, 0])
-            naca_wing(span=20, chord=10, t=0.06, n=500, center=true);
+            naca_wing(
+                span=13,
+                chord=10,
+                t=0.06,
+                n=500,
+                center=false,
+                scale=[0.8, 1]
+            );
+}
+
+module vertical_stabilizer() {
+    translate([45, 0, 7])
+        rotate([0, 0, 0])
+            naca_wing(
+                span=13,
+                chord=10,
+                t=0.06,
+                n=500,
+                center=true,
+                scale=[0.5, 1]
+            );
 }
 
 wing();
 mirror([0,1,0])
     wing();
+
 fuselage();
+
 horizontal_stabilizer();
+mirror([0,1,0])
+    horizontal_stabilizer();
+
+difference() {
+    vertical_stabilizer();
+    translate([51, 0, 0])
+        rotate([0, 50, 0])
+            cube([5, 5, 5], center=true);
+}
