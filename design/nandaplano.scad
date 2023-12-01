@@ -44,7 +44,7 @@ module naca_wing(span, chord, t, n, symetrical=true, center=false, scale=1) {
     }
 }
 
-module wing() {
+module wing_base() {
     rotate([90, 0, 0]) {
         naca_wing(
             span=50,
@@ -52,8 +52,32 @@ module wing() {
             t=0.14,
             n=500,
             symetrical=false,
-            scale=[0.75, 0.75]
+            scale=[0.7, 0.7]
         );
+    }
+}
+
+module wing() {
+    difference() {
+        wing_base();
+        translate([11, -30, 0])
+            rotate([0, 0, -2])
+                cube([5, 30, 5], center=true);
+    }
+}
+
+module aileron() {
+    intersection() {
+        wing_base();
+        translate([11, -30, 0]) {
+            rotate([0, 0, -2]) {
+                linear_extrude(height=3,center=true) {
+                    offset(delta=-0.2) {
+                        square([5, 30], center=true);
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -95,6 +119,10 @@ module vertical_stabilizer() {
 wing();
 mirror([0,1,0])
     wing();
+
+aileron();
+mirror([0,1,0])
+    aileron();
 
 fuselage();
 
